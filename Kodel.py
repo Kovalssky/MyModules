@@ -1,4 +1,4 @@
-#meta developer: @K0vaIskii
+# meta developer: @K0vaIskii
 __version__ = (0, 0, 1)
 
 from hikkatl.types import Message
