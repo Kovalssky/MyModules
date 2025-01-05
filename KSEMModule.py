@@ -1,10 +1,13 @@
-__version__ = (0, 0, 2)
+__version__ = (0, 0, 3)
 # meta developer: @K0vaIskii
 
 from hikkatl.tl.patched import Message
 from .. import loader, utils
 from telethon import functions, types
 from asyncio import sleep
+
+
+
 @loader.tds
 class EmojiStatusModule(loader.Module):
     """Модуль для обновления Премиум-статуса"""
@@ -16,7 +19,13 @@ class EmojiStatusModule(loader.Module):
     }
 
     def __init__(self):
-        pass
+        self.config = loader.ModuleConfig(
+            loader.ConfigValue(
+                "del_reply_emoji", True,
+                "Удалять ответный эмодзи после обновления статуса?",
+                validator=loader.validators.Boolean(),
+            ),
+        )
 
     @loader.command(ru_doc="<ответ> - Обновить Премиум-статус")
     async def sem(self, message: Message):
@@ -31,7 +40,7 @@ class EmojiStatusModule(loader.Module):
             await utils.answer(message, self.strings("status_updated"))
             await sleep(2)
             await message.delete()
-            if doc.from_id == message.from_id:
+            if doc.from_id == message.from_id and self.config["del_reply_emoji"]:
                 await doc.delete()
         except Exception as e:
             await utils.answer(message, self.strings("status_error"))
