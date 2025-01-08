@@ -1,5 +1,5 @@
 # meta developer: @K0vaIskii
-__version__ = (0, 4, 3)
+__version__ = (0, 4, 5)
 
 from hikkatl.types import Message
 from .. import loader, utils
@@ -81,7 +81,27 @@ class YaranBotModule(loader.Module):
 			validator=loader.validators.Integer(),
 		),
 	)
-	
+	@loader.command(ru_doc="- Перевести бота в тест режим")
+	async def testm(self, message: Message):
+		global chat_rules
+		global bot_rules
+		global admin_list
+		global builds
+		delay = self.config['delay']
+		try:
+			await utils.answer(message, '<emoji document_id=5208661316947955396>❓</emoji> Перезагрузка бота тестовый режим...')
+			
+			os.system('sudo systemctl stop bot')
+			await sleep(4)
+			await self._client.send_message(2350908448, "BOT: go_test_mode")
+			os.system('sudo systemctl start bot')
+			await sleep(2)
+			await self.allmodules.commands['sync'](await utils.answer(message, f"{self.get_prefix()}sync"))
+			await sleep(delay+2)
+			await utils.answer(message, '<emoji document_id=5208964339775588373>✅</emoji> Бот перезагружен!')
+		except Exception as e:
+			await utils.answer(message, f'Не удалось запустить Юнит!\n{e}')
+		
 	@loader.command(ru_doc="- Синхронизировать базу данных ")
 	async def sync(self, message: Message):
 		global chat_rules
@@ -162,7 +182,7 @@ class YaranBotModule(loader.Module):
 			builds = self.strings['builds_n']
 			await sleep(delay)
 		
-		await utils.answer(message, f'''Процесс завершен!
+		await utils.answer(message, f'''Синхронизация закончена!
 		{chat_rules}
 		{bot_rules}
 		{admin_list}
@@ -204,9 +224,9 @@ class YaranBotModule(loader.Module):
 				chat_rules = self.strings['chat_rules_n']
 				await sleep(delay)
 				
-		elif args == 'bot_rules' and message.is_reply():
+		elif args == 'bot_rules' and message.is_reply:
 			self.config['bot_rules'] = reply.text
-			utils.answer(message, self.strings['bot_rules_up'])
+			await utils.answer(message, self.strings['bot_rules_up'])
 			await sleep(3)
 			try:	
 				await utils.answer(message, self.strings["bot_rules"])
@@ -250,7 +270,7 @@ class YaranBotModule(loader.Module):
 			
 		elif args == 'builds' and message.is_reply:
 			self.config['builds'] = reply.text
-			utils.answer(message, self.strings['builds_up'])
+			await utils.answer(message, self.strings['builds_up'])
 			await sleep(3)
 			try:
 				await utils.answer(message, self.strings["builds"])    
