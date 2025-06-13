@@ -81,10 +81,12 @@ class Kobalt(loader.Module):
         if args[1] not in quality_list:
             await utils.answer(message, self.strings["quality_error"].format(' '.join(quality_list)))
             return
-        cobalt.quality("max")
+        
         if len(args) > 1:
             quality = args[1]
             cobalt.quality(quality)
+        else:
+            cobalt.quality("max")
         await utils.answer(message, self.strings["media_load"].format(args[0]))
         try:
             filename = cobalt.download(args[0])
@@ -104,11 +106,20 @@ class Kobalt(loader.Module):
                 )
         os.remove(filename)
         
-    @loader.command(ru_doc='Скачать Видео без звука')
+    @loader.command(ru_doc='{url} {quality} - Скачать Видео без звука')
     async def kmvcmd(self, message: Message):
         cobalt = CobaltAPI()
         cobalt.mode("mute")
-        cobalt.quality("max")
+        quality_list = ["max", "4320", "2160", "1440", "1080", "720", "480", "360", "240", "144"]
+        if args[1] not in quality_list:
+            await utils.answer(message, self.strings["quality_error"].format(' '.join(quality_list)))
+            return
+            
+        if len(args) > 1:
+            quality = args[1]
+            cobalt.quality(quality)
+        else:
+            cobalt.quality("max")
         args = utils.get_args_raw(message).split()
         await utils.answer(message, self.strings["media_load"].format(args[0])+self.strings["video_muted"])
         try:
