@@ -79,7 +79,6 @@ class Kobalt(loader.Module):
         if len(args) > 1:
             quality = args[1]
             cobalt.quality(quality)
-        mime = magic.Magic(mime=True)
         await utils.answer(message, self.strings["media_load"].format(args[0]))
         try:
             filename = cobalt.download(args[0])
