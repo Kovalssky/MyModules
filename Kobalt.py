@@ -7,7 +7,7 @@ from hikkatl.types import Message
 from .. import loader, utils
 from pydub import AudioSegment
 from Kobalt import CobaltAPI
-import magic
+import mimetype
 
 @loader.tds
 class Kobalt(loader.Module):
@@ -80,14 +80,14 @@ class Kobalt(loader.Module):
             quality = args[1]
             cobalt.quality(quality)
         mime = magic.Magic(mime=True)
-        await utils.answer(message, self.strings["video_load"].format(args[0]))
+        await utils.answer(message, self.strings["media_load"].format(args[0]))
         try:
             filename = cobalt.download(args[0])
         except:
-            await utils.answer(message, self.strings["video_error"])
+            await utils.answer(message, self.strings["media_error"])
             return
-        mime_type = mime.from_file(filename)
-        if mime_type.startswith('video/'):
+        mime_type, _ = mimetypes.guess_type(filename)
+        if (mime_type and mime_type.startswith('video/')):
             caption = self.strings["video_send"].format(args[0]) if self.config["caption"] else None  
         else:
             caption = self.strings["photo_send"].format(args[0]) if self.config["caption"] else None
