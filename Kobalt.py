@@ -7,6 +7,7 @@ from hikkatl.types import Message
 from .. import loader, utils
 from pydub import AudioSegment
 from Kobalt import CobaltAPI
+import magic
 
 @loader.tds
 class Kobalt(loader.Module):
@@ -70,28 +71,46 @@ class Kobalt(loader.Module):
             os.remove(filename)
         
 
-    @loader.command(ru_doc='{url} {quality} - Скачать Видео, если не указывать качество оно будет выбрано автоматически. max, 4320, 2160, 1440, 1080, 720, 480, 360, 240, 144')
-    async def kvcmd(self, message: Message):
+    @loader.command(ru_doc='{url} {quality} - Скачать Медиа, если не указывать качество оно будет выбрано автоматически. max, 4320, 2160, 1440, 1080, 720, 480, 360, 240, 144')
+    async def kmcmd(self, message: Message):
         cobalt = CobaltAPI()
         args = utils.get_args_raw(message).split()
         if len(args) > 1:
             quality = args[1]
             cobalt.quality(quality)
-        await utils.answer(message, self.strings["video_load"].format(args[0]))
-        try:
-            filename = cobalt.download(args[0])
-        except:
-            await utils.answer(message, self.strings["video_error"])
-            return
+        mime = magic.Magic(mime=True)
+        mime_type = mime.from_file(filename)
+        if not mime_type.startswith('video/'):
+            try:
+                filename = cobalt.download(args[0])
+            except:
+                await utils.answer(message, self.strings["photo_error"])
+                return
             
-        with open(filename, "rb") as f:
-            await utils.answer_file(
-            message, f,
-            caption=self.strings["video_send"].format(
-                args[0]) if self.config["caption"] else None,
-            force_document=False
-            )
-            os.remove(filename)
+            with open(filename, "rb") as f:
+                await utils.answer_file(
+                message, f,
+                caption=self.strings["photo_send"].format(
+                    args[0]) if self.config["caption"] else None,
+                force_document=False
+                )
+                os.remove(filename)
+        else:
+            await utils.answer(message, self.strings["video_load"].format(args[0]))
+            try:
+                filename = cobalt.download(args[0])
+            except:
+                await utils.answer(message, self.strings["video_error"])
+                return
+            
+            with open(filename, "rb") as f:
+                await utils.answer_file(
+                message, f,
+                caption=self.strings["video_send"].format(
+                    args[0]) if self.config["caption"] else None,
+                force_document=False
+                )
+                os.remove(filename)
         
     @loader.command(ru_doc='Скачать Видео без звука')
     async def kmvcmd(self, message: Message):
