@@ -1,6 +1,6 @@
 __version__ = (0, 1, 1)
 # meta developer: @Kovalsky_modules
-# requires: python-magic-pure
+# requires: kobalt
 
 import os
 from hikkatl.types import Message
