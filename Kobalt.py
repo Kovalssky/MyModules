@@ -1,4 +1,4 @@
-__version__ = (0, 1, 5)
+__version__ = (0, 1, 6)
 # meta developer: @Kovalsky_modules
 # requires: kobalt
 
@@ -83,12 +83,12 @@ class Kobalt(loader.Module):
         cobalt = CobaltAPI()
         args = utils.get_args_raw(message).split()
         quality_list = ["max", "4320", "2160", "1440", "1080", "720", "480", "360", "240", "144"]
-        if args[1] not in quality_list:
-            await utils.answer(message, self.strings["quality_error"].format(' '.join(quality_list)))
-            return
         
         if len(args) > 1:
             quality = args[1]
+            if quality not in quality_list:
+                await utils.answer(message, self.strings["quality_error"].format(' '.join(quality_list)))
+                return
             cobalt.quality(quality)
         else:
             cobalt.quality("max")
@@ -116,12 +116,13 @@ class Kobalt(loader.Module):
         cobalt = CobaltAPI()
         cobalt.mode("mute")
         quality_list = ["max", "4320", "2160", "1440", "1080", "720", "480", "360", "240", "144"]
-        if args[1] not in quality_list:
-            await utils.answer(message, self.strings["quality_error"].format(' '.join(quality_list)))
-            return
+        
             
         if len(args) > 1:
             quality = args[1]
+            if quality not in quality_list:
+                await utils.answer(message, self.strings["quality_error"].format(' '.join(quality_list)))
+                return
             cobalt.quality(quality)
         else:
             cobalt.quality("max")
