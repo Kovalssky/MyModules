@@ -76,6 +76,7 @@ class Kobalt(loader.Module):
     async def kmcmd(self, message: Message):
         cobalt = CobaltAPI()
         args = utils.get_args_raw(message).split()
+        cobalt.quality("1080")
         if len(args) > 1:
             quality = args[1]
             cobalt.quality(quality)
