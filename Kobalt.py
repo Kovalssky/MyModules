@@ -88,10 +88,10 @@ class Kobalt(loader.Module):
             return
         mime_type = mime.from_file(filename)
         caption = self.strings["video_send"].format(
-            args[0]
-        ) if self.config["caption"] else None if mime_type.startswith('video/') else self.strings["photo_send"].format(
-            args[0]
-        ) if self.config["caption"] else None
+               args[0]
+           ) if self.config["caption"] else None if mime_type.startswith('video/') else self.strings["photo_send"].format(
+               args[0]
+           ) if self.config["caption"] else None
         with open(filename, "rb") as f:
             await utils.answer_file(
                 message, f,
