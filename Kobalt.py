@@ -7,7 +7,7 @@ from hikkatl.types import Message
 from .. import loader, utils
 from pydub import AudioSegment
 from Kobalt import CobaltAPI
-import mimetype
+import mimetypes
 
 @loader.tds
 class Kobalt(loader.Module):
