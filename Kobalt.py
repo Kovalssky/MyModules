@@ -1,4 +1,4 @@
-__version__ = (0, 1, 1)
+__version__ = (0, 1, 2)
 # meta developer: @Kovalsky_modules
 # requires: kobalt
 
@@ -103,11 +103,11 @@ class Kobalt(loader.Module):
         cobalt = CobaltAPI()
         cobalt.mode("mute")
         args = utils.get_args_raw(message).split()
-        await utils.answer(message, self.strings["video_load"].format(args[0])+self.strings["video_muted"])
+        await utils.answer(message, self.strings["media_load"].format(args[0])+self.strings["video_muted"])
         try:
             filename = cobalt.download(args[0])
         except:
-            await utils.answer(message, self.strings["video_error"])
+            await utils.answer(message, self.strings["media_error"])
             return
             
         with open(filename, "rb") as f:
