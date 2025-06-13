@@ -1,5 +1,5 @@
 __version__ = (0, 1, 0)
-# meta developer: @devKovalsky
+# meta developer: @Kovalsky_modules
 
 
 import os
