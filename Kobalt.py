@@ -1,4 +1,4 @@
-__version__ = (0, 1, 4)
+__version__ = (0, 1, 5)
 # meta developer: @Kovalsky_modules
 # requires: kobalt
 
@@ -11,7 +11,11 @@ import mimetypes
 
 @loader.tds
 class Kobalt(loader.Module):
-    """Скачивание видео по ссылке из разных источников"""
+    """
+    Скачивание видео по ссылке из разных источников.
+    Если не указывать качество, будет выбрано Возможные варианты качества:
+    <blockquote>max, 4320, 2160, 1440, 1080, 720, 480, 360, 240, 144</blockquote>
+    """
 
     strings = {
         'name': 'Kobalt',
@@ -73,7 +77,7 @@ class Kobalt(loader.Module):
         os.remove(filename)
         
 
-    @loader.command(ru_doc='{url} {quality} - Скачать Медиа, если не указывать качество оно будет выбрано максимальное. max, 4320, 2160, 1440, 1080, 720, 480, 360, 240, 144')
+    @loader.command(ru_doc='{url} {quality} - Скачать Медиа')
     async def kmcmd(self, message: Message):
         cobalt = CobaltAPI()
         args = utils.get_args_raw(message).split()
