@@ -1,4 +1,4 @@
-__version__ = (0, 1, 6)
+__version__ = (0, 1, 3)
 # meta developer: @Kovalsky_modules
 # requires: kobalt
 
@@ -113,6 +113,7 @@ class Kobalt(loader.Module):
         
     @loader.command(ru_doc='{url} {quality} - Скачать Видео без звука')
     async def kmvcmd(self, message: Message):
+        args = utils.get_args_raw(message).split()
         cobalt = CobaltAPI()
         cobalt.mode("mute")
         quality_list = ["max", "4320", "2160", "1440", "1080", "720", "480", "360", "240", "144"]
