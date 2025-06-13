@@ -1,4 +1,4 @@
-__version__ = (0, 1, 3)
+__version__ = (0, 1, 4)
 # meta developer: @Kovalsky_modules
 # requires: kobalt
 
@@ -23,7 +23,8 @@ class Kobalt(loader.Module):
         'media_error': '<emoji document_id=5361780367088958862>⚠</emoji> Не получилось скачать медиа. Проверьте правильность ссылки',
         'video_muted': ' без звука',
         'photo_send': '<emoji document_id=5361697044723419988>✅</emoji> Ваше <a href="{}">Фото</a>',
-        'services': '<blockquote><b>Поддерживаемые сервисы:</b></blockquote>\n<blockquote>{}</blockquote>'
+        'services': '<blockquote><b>Поддерживаемые сервисы:</b></blockquote>\n<blockquote>{}</blockquote>',
+        'quality_error': '<blockquote><emoji document_id=5361780367088958862>⚠</emoji> Неверное качество видео! Доступные варианты:</blockquote>\n<blockquote>{}</blockquote>'
     }
 
     def __init__(self):
@@ -72,10 +73,14 @@ class Kobalt(loader.Module):
         os.remove(filename)
         
 
-    @loader.command(ru_doc='{url} {quality} - Скачать Медиа, если не указывать качество оно будет выбрано автоматически. max, 4320, 2160, 1440, 1080, 720, 480, 360, 240, 144')
+    @loader.command(ru_doc='{url} {quality} - Скачать Медиа, если не указывать качество оно будет выбрано максимальное. max, 4320, 2160, 1440, 1080, 720, 480, 360, 240, 144')
     async def kmcmd(self, message: Message):
         cobalt = CobaltAPI()
         args = utils.get_args_raw(message).split()
+        quality_list = ["max", "4320", "2160", "1440", "1080", "720", "480", "360", "240", "144"]
+        if args[1] not in quality_list:
+            await utils.answer(message, self.strings["quality_error"].format(' '.join(quality_list)))
+            return
         cobalt.quality("max")
         if len(args) > 1:
             quality = args[1]
@@ -103,6 +108,7 @@ class Kobalt(loader.Module):
     async def kmvcmd(self, message: Message):
         cobalt = CobaltAPI()
         cobalt.mode("mute")
+        cobalt.quality("max")
         args = utils.get_args_raw(message).split()
         await utils.answer(message, self.strings["media_load"].format(args[0])+self.strings["video_muted"])
         try:
