@@ -1,4 +1,4 @@
-__version__ = (0, 1, 0)
+__version__ = (0, 1, 1)
 # meta developer: @Kovalsky_modules
 
 
@@ -18,10 +18,11 @@ class Kobalt(loader.Module):
         'audio_load': '<emoji document_id=5873204392429096339>📥</emoji> Загрузка <a href="{}">Аудио</a>',
         'audio_send': '<emoji document_id=5361697044723419988>✅</emoji> Ваше <a href="{}">Аудио</a>',
         'audio_error': '<emoji document_id=5361780367088958862>⚠</emoji> Не получилось скачать аудио. Проверьте правильность ссылки',
-        'video_load': '<emoji document_id=5873204392429096339>📥</emoji> Загрузка <a href="{}">Видео</a>',
+        'media_load': '<emoji document_id=5873204392429096339>📥</emoji> Загрузка <a href="{}">Медиа</a>',
         'video_send': '<emoji document_id=5361697044723419988>✅</emoji> Ваше <a href="{}">Видео</a>',
-        'video_error': '<emoji document_id=5361780367088958862>⚠</emoji> Не получилось скачать видео. Проверьте правильность ссылки',
+        'media_error': '<emoji document_id=5361780367088958862>⚠</emoji> Не получилось скачать медиа. Проверьте правильность ссылки',
         'video_muted': ' без звука',
+        'photo_send': '<emoji document_id=5361697044723419988>✅</emoji> Ваше <a href="{}">Фото</a>',
         'services': '<blockquote><b>Поддерживаемые сервисы:</b></blockquote>\n<blockquote>{}</blockquote>'
     }
 
@@ -68,7 +69,7 @@ class Kobalt(loader.Module):
                 args[0]) if self.config["caption"] else None,
             force_document=False
             )
-            os.remove(filename)
+        os.remove(filename)
         
 
     @loader.command(ru_doc='{url} {quality} - Скачать Медиа, если не указывать качество оно будет выбрано автоматически. max, 4320, 2160, 1440, 1080, 720, 480, 360, 240, 144')
@@ -79,38 +80,23 @@ class Kobalt(loader.Module):
             quality = args[1]
             cobalt.quality(quality)
         mime = magic.Magic(mime=True)
+        await utils.answer(message, self.strings["video_load"].format(args[0]))
+        try:
+            filename = cobalt.download(args[0])
+        except:
+            await utils.answer(message, self.strings["video_error"])
+            return
         mime_type = mime.from_file(filename)
-        if not mime_type.startswith('video/'):
-            try:
-                filename = cobalt.download(args[0])
-            except:
-                await utils.answer(message, self.strings["photo_error"])
-                return
-            
-            with open(filename, "rb") as f:
-                await utils.answer_file(
+        caption = self.strings["video_send"].format(
+                    args[0]) if self.config["caption"] else None if mime_type.startswith('video/') else self.strings["photo_send"].format(
+                    args[0]) if self.config["caption"] else None:
+        with open(filename, "rb") as f:
+            await utils.answer_file(
                 message, f,
-                caption=self.strings["photo_send"].format(
-                    args[0]) if self.config["caption"] else None,
+                caption=caption,
                 force_document=False
                 )
-                os.remove(filename)
-        else:
-            await utils.answer(message, self.strings["video_load"].format(args[0]))
-            try:
-                filename = cobalt.download(args[0])
-            except:
-                await utils.answer(message, self.strings["video_error"])
-                return
-            
-            with open(filename, "rb") as f:
-                await utils.answer_file(
-                message, f,
-                caption=self.strings["video_send"].format(
-                    args[0]) if self.config["caption"] else None,
-                force_document=False
-                )
-                os.remove(filename)
+        os.remove(filename)
         
     @loader.command(ru_doc='Скачать Видео без звука')
     async def kmvcmd(self, message: Message):
@@ -131,4 +117,4 @@ class Kobalt(loader.Module):
                 args[0])+self.strings["video_muted"] if self.config["caption"] else None,
             force_document=False
             )
-            os.remove(filename)
+        os.remove(filename)
